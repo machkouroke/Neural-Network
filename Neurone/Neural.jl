@@ -4,7 +4,7 @@ using Plots: plot
 Base.@kwdef mutable struct Neuron
     W::Array = []
     b::Float64=0
-    α::Float64=0.1
+    α::Float64=0.0001
 end
 function Base.show(io::IO, x::Neuron)
     print(io, "W:$(x.W) \nb:$(x.b)\nα:$(x.α)")
@@ -31,16 +31,17 @@ end
 - `α::Float64`: the learning rate
 - `iter::Int64`: the number of iterations
 """
-function gradient(X::AbstractMatrix, y::AbstractMatrix, neuron::Neuron,  α::Float64; iter::Int64=100)
+function gradient(X::AbstractMatrix, y::AbstractMatrix, neuron::Neuron,  α::Float64; iter::Int64=10000)
     W, b = neuron.W, neuron.b
     loss = []
+    accuracy = []
     println("Start of gradient")
     for i in 1:iter
         # println("Iteration:$(i)")
-        A = a(z(W, X, b))
+        A = a(z(neuron.W, X, neuron.b))
         push!(loss, log_loss(A, y))
         dW, db = ∂LW(X, y, A), ∂Lb(X, y, A)
-        W, b = update(dW, db, W, b, α)
+        neuron.W, neuron.b = update(dW, db, neuron.W, neuron.b, α)
     end
     y_pred = predict(neuron, X)
 

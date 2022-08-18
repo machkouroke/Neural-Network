@@ -1,5 +1,5 @@
 using HDF5
-using Plots: plot
+using Plots: plot, heatmap
 function data_load()
     permute(a) = permutedims(read(a), collect(reverse(1:ndims(a))))
     X_train = permute(h5open("data/trainset.hdf5", "r")["X_train"])
@@ -10,12 +10,18 @@ function data_load()
 end
 
 function normalize(x::Array)
-    return x ./ findmax(x)[1]
+    return x ./ 254
 end
 function flatten_image(x::Array)
-    flatten_array = reshape(x, (size(x)[begin], :))
+    # flatten_array = reshape(x, (size(x)[begin], :))
+    flatten_array = Array{Any, 2}(undef, (size(x)[begin], size(x)[end]^2))
+    for i in 1:size(x)[begin]
+        # println(collect(Iterators.flatten(x[i, :, :])))
+        flatten_array[i, :] = collect(Iterators.flatten(x[i, :, :]))
+    end
     return flatten_array
 end
+
 
 
 
@@ -26,4 +32,5 @@ function preprocess_data()
     
     return X_train, y_train, X_test, y_test
 end
-
+# X_train, y_train, X_test, y_test = data_load()
+# heatmap(reverse(X_train[4, :, :]), color=:grays, aspect_ratio=1)

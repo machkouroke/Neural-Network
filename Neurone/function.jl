@@ -11,7 +11,6 @@ end
 
 """Fonction d'activation"""
 function a(Z::AbstractMatrix)
-    println(findmax(Z)[1], findmin(Z)[1])
 
     if any(y -> y >= 710, Z)
         print("Overflow")
