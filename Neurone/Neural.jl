@@ -1,10 +1,11 @@
 include("function.jl")
 using Metrics
 using Plots: plot
+using ProgressBars
 Base.@kwdef mutable struct Neuron
     W::Array = []
     b::Float64=0
-    α::Float64=0.0001
+    α::Float64=0.01
 end
 function Base.show(io::IO, x::Neuron)
     print(io, "W:$(x.W) \nb:$(x.b)\nα:$(x.α)")
@@ -36,16 +37,18 @@ function gradient(X::AbstractMatrix, y::AbstractMatrix, neuron::Neuron,  α::Flo
     loss = []
     accuracy = []
     println("Start of gradient")
-    for i in 1:iter
+    for i in ProgressBar(1:iter)
         # println("Iteration:$(i)")
         A = a(z(neuron.W, X, neuron.b))
+        y_pred = predict(neuron, X)
+        push!(accuracy, binary_accuracy(y_pred, y))
         push!(loss, log_loss(A, y))
         dW, db = ∂LW(X, y, A), ∂Lb(X, y, A)
         neuron.W, neuron.b = update(dW, db, neuron.W, neuron.b, α)
     end
     y_pred = predict(neuron, X)
-
-    return W, b, loss
+    println("Accuracy Train Set: ", binary_accuracy(y_pred, y))
+    return W, b, loss, accuracy
 end
 """
     Fit the neuron to the data
@@ -55,8 +58,8 @@ end
 - `output::AbstractMatrix`: the expected output
 """
 function fit(x::Neuron, data::AbstractMatrix, output::AbstractMatrix)
-    x.W, x.b, loss = gradient(data, output, x, x.α)
-    return loss
+    x.W, x.b, loss, accuracy = gradient(data, output, x, x.α)
+    return loss, accuracy
 end
 
 """
