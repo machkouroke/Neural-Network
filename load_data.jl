@@ -22,10 +22,8 @@ end
 function preprocess_data()
     X_train, y_train, X_test, y_test = data_load()
     X_train, X_test = flatten_image(X_train), flatten_image(X_test)
- 
     X_train, X_test = normalize.((X_train, X_test))
     
-
     return X_train, y_train, X_test, y_test
 end
 

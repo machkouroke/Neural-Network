@@ -22,9 +22,9 @@ end
 
 
 """Fonction de cout"""
-function log_loss(A::AbstractMatrix, y::AbstractMatrix)
+function log_loss(A::AbstractMatrix, y::AbstractMatrix, ϵ::Float64=1e-15)
     m = size(y)[1]
-    return -(1/m) * sum(y .* log.(A) + (1 .- y) .* log.(1 .- A))
+    return -(1/m) * sum(y .* log.(A .+ ϵ) + (1 .- y) .* log.(1 .- A .+ ϵ))
 end
 
 
