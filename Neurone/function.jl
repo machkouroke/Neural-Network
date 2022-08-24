@@ -12,9 +12,6 @@ end
 """Fonction d'activation"""
 function a(Z::AbstractMatrix)
 
-    if any(y -> y >= 710, Z)
-        print("Overflow")
-    end
     return 1 ./ (1 .+ exp.(-Z))
 end
 

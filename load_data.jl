@@ -32,5 +32,3 @@ function preprocess_data()
     
     return X_train, y_train, X_test, y_test
 end
-# X_train, y_train, X_test, y_test = data_load()
-# heatmap(reverse(X_train[4, :, :]), color=:grays, aspect_ratio=1)
